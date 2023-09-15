@@ -21,15 +21,17 @@ async fn main(){
         .expect("unable to make connection");
 
     let app = Router::new()
+        .route("/user",get(|| async {"hello world"}))
         .route("/get_user",get(controllers::auth::get_user))
         .route("/user_data_json_array",get(controllers::auth::get_user_data_json_array))
         .layer(Extension(pool));
     
     
 
-    let addr: std::net::SocketAddr = std::net::SocketAddr::from(([127,0,0,1],3000));
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .expect("failed to start server");
+        let addr = ([0, 0, 0, 0], 8000).into(); // Listen on all interfaces (0.0.0.0) on port 8000
+
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .await
+            .expect("failed to start server");
 }
